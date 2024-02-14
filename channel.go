@@ -16,6 +16,18 @@ func NewRabbitMQChannel(conn *amqp.Connection) (*RabbitMQChannel, error) {
     return &RabbitMQChannel{channel: channel}, nil
 }
 
+func (rmq *RabbitMQChannel) Publish(exchange, routingKey string, message []byte) error {
+    return rmq.channel.Publish(
+        exchange,
+        routingKey,
+        false,
+        false,
+        amqp.Publishing{
+            ContentType: "text/plain",
+            Body:        message,
+        })
+}
+
 func (rmq *RabbitMQChannel) Close() {
     if rmq.channel != nil {
         rmq.channel.Close()
